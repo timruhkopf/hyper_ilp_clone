@@ -106,19 +106,19 @@ def objective(
         verbose: bool = False,
 ) -> Tuple[float, int, Sequence[float]]:
     """Optimization objective to minimize."""
-    try:
-        return pipeline(
+    # try:
+    return pipeline(
             is_hpo=True,
             verbose=verbose,
             **kwargs, **hpkwargs
         )
-    except Exception as e:
-        logger.error(f"ERROR: {e}")
-        if 'CUDA out of memory.' in e.args[0]:
-            return 1000.0, None, None
-        if raise_on_error:
-            raise e
-        return 1000.0, None, None
+    # except Exception as e:
+    #     logger.error(f"ERROR: {e}")
+    #     if 'CUDA out of memory.' in e.args[0]:
+    #         return 1000.0, None, None
+    #     if raise_on_error:
+    #         raise e
+    #     return 1000.0, None, None
 
 
 def hpo_pipeline_smac(
