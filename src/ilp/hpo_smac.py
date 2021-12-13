@@ -16,8 +16,10 @@ from class_resolver import Hint
 from pykeen.losses import BCEWithLogitsLoss, MarginRankingLoss
 
 from .models import QualifierModel, StarE, model_resolver
-from .models.layers import rotate
 from .pipeline import pipeline
+
+import wandb
+
 
 logger = logging.getLogger(__name__)
 
@@ -128,6 +130,7 @@ def hpo_pipeline_smac(
         early_stopping_patience: int,
         num_hpo_iterations: int,
         model_cls: Hint[QualifierModel],
+        model_kwargs = {'None':None},
         hpo,
         **kwargs,
 ):
@@ -136,7 +139,6 @@ def hpo_pipeline_smac(
     model_cls = model_resolver.lookup(query=model_cls)
 
     # model specific search spaces
-    model_kwargs = dict()
     cs = ConfigurationSpace()
     cs.add_hyperparameters(hpo_ranges_cs)
     if issubclass(model_cls, QualifierModel):
@@ -149,7 +151,10 @@ def hpo_pipeline_smac(
 
     # test out the configuration
     # pipeparam = dict(cs.get_default_configuration())
-    kwargs.update(kwargs)
+
+    wandb.config.hpo = hpo
+
+    kwargs['model_kwargs']= hpo
     kwargs['model_name'] = model_cls
     kwargs['num_epochs'] = num_epochs
     # objective(hpkwargs=pipeparam, kwargs=kwargs)

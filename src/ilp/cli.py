@@ -488,6 +488,7 @@ def tune_smac_stare(
         early_stopping_patience=early_stopping_patience,
         num_hpo_iterations=num_hpo_iterations,
         model_cls=model,
+        model_kwargs={'hp':hpo},
         # forwarded to pipeline
         dataset_name=dataset_name,
         dataset_version=dataset_version,
