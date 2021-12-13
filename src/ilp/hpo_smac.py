@@ -123,7 +123,7 @@ def objective(
 
 def hpo_pipeline_smac(
         *,
-        training_approach: str,
+        training_approach: str,  # fixme hard coded default loss for stare: BCEWithLogitsLoss()
         num_epochs: int,
         early_stopping_patience: int,
         num_hpo_iterations: int,
@@ -151,7 +151,7 @@ def hpo_pipeline_smac(
     # pipeparam = dict(cs.get_default_configuration())
     kwargs.update(kwargs)
     kwargs['model_name'] = model_cls
-    kwargs['num_epochs'] = 10
+    kwargs['num_epochs'] = num_epochs
     # objective(hpkwargs=pipeparam, kwargs=kwargs)
     # TODO how to pass the configuration with the additional config stuff (non Hp) to smac?
     #  - partial?

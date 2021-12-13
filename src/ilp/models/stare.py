@@ -5,6 +5,8 @@ from typing import Callable, Optional
 
 import torch
 from pykeen.losses import Loss
+from pykeen.losses import BCEWithLogitsLoss, MarginRankingLoss
+
 from torch_geometric.data import Data
 
 from .base import BaseQualifierModel
@@ -41,7 +43,7 @@ class StarE(BaseQualifierModel):
         triple_qual_weight: Optional[float] = None,
         use_learnable_x=False,  # FIXME: this originally is True
         affine_transformation: bool = False,
-        loss: Optional[Loss] = None,
+        loss: Optional[Loss] = BCEWithLogitsLoss(),  # fixme originally None,
         device: torch.device = None,
     ):
         super().__init__(
