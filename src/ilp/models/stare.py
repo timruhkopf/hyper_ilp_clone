@@ -10,7 +10,7 @@ from torch_geometric.data import Data
 from .base import BaseQualifierModel
 from .stare_representation import StarEEncoder, StarERepresentation
 from ..data.statement_factory import StatementsFactory
-
+from ilp.models.layers import rotate
 __all__ = [
     "StarE",
 ]
@@ -23,14 +23,14 @@ class StarE(BaseQualifierModel):
         statement_factory: StatementsFactory,
         embedding_dim: int = 500,
         num_layers: int = 2,
-        use_bias: bool = True,
+        use_bias: bool = False, # Fixme: originally is True
         feature_dim: int = None,
         hid_drop: float = 0.3,
         gcn_drop: float = 0.1,
         transformer_drop: float = 0.1,
-        composition_function: Callable = None,
+        composition_function: Callable = rotate, # fixme: originally None,
         qualifier_aggregation: str = "mul",
-        qualifier_comp_function: Callable = None,
+        qualifier_comp_function: Callable = rotate,  # Fixme: originally None,
         use_attention: bool = False,
         num_attention_heads: Optional[int] = None,
         num_transformer_heads: int = 8,
@@ -39,7 +39,7 @@ class StarE(BaseQualifierModel):
         attention_slope: Optional[float] = None,
         attention_drop: Optional[float] = None,
         triple_qual_weight: Optional[float] = None,
-        use_learnable_x=True,
+        use_learnable_x=False,  # FIXME: this originally is True
         affine_transformation: bool = False,
         loss: Optional[Loss] = None,
         device: torch.device = None,

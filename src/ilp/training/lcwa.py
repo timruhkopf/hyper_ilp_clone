@@ -33,7 +33,7 @@ class InductiveLCWATrainingLoop(TrainingLoop[InductiveLCWASampleType, InductiveL
         return batch[0].shape[0]
 
     def _create_instances(self, triples_factory: CoreTriplesFactory) -> InductiveLCWAInstances:  # noqa: D102
-        assert isinstance(triples_factory, StatementsFactory)
+        # assert isinstance(triples_factory, StatementsFactory)
         # TODO: Fix typing by subclassing from CoreTriplesFactory / Instances?
         return triples_factory.create_lcwa_instances()
 

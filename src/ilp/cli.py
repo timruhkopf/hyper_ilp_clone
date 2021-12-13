@@ -68,7 +68,7 @@ option_epochs = click.option(
     "-ne",
     "--num-epochs",
     type=int,
-    default=1_000,
+    default=100,  # =1_000,
 )
 
 option_batch_size = click.option(
@@ -163,20 +163,20 @@ def run():
 @option_training_approach
 @option_embedding_dim
 def run_blp(
-    inductive_setting: str,
-    dataset_name: str,
-    dataset_version: str,
-    embedding_dimension: int,
-    create_inverse_triples: bool,
-    max_num_qualifier_pairs: int,
-    batch_size: int,
-    num_negatives: int,
-    num_epochs: int,
-    learning_rate: float,
-    use_wandb: bool,
-    eval_batch_size: int,
-    label_smoothing: float,
-    training_approach: str,
+        inductive_setting: str,
+        dataset_name: str,
+        dataset_version: str,
+        embedding_dimension: int,
+        create_inverse_triples: bool,
+        max_num_qualifier_pairs: int,
+        batch_size: int,
+        num_negatives: int,
+        num_epochs: int,
+        learning_rate: float,
+        use_wandb: bool,
+        eval_batch_size: int,
+        label_smoothing: float,
+        training_approach: str,
 ):
     """Run BLP."""
     pipeline(
@@ -222,24 +222,24 @@ def run_blp(
 @option_transformer_layers
 @click.option("-at", "--affine-transformation", type=bool, default=False)
 def run_qblp(
-    inductive_setting: str,
-    dataset_name: str,
-    dataset_version: str,
-    embedding_dimension: int,
-    transformer_hidden_dimension: int,
-    create_inverse_triples: bool,
-    max_num_qualifier_pairs: int,
-    batch_size: int,
-    num_negatives: int,
-    num_epochs: int,
-    learning_rate: float,
-    use_wandb: bool,
-    eval_batch_size: int,
-    label_smoothing: float,
-    transformer_num_heads: int,
-    transformer_num_layers: int,
-    training_approach: str,
-    affine_transformation: bool,
+        inductive_setting: str,
+        dataset_name: str,
+        dataset_version: str,
+        embedding_dimension: int,
+        transformer_hidden_dimension: int,
+        create_inverse_triples: bool,
+        max_num_qualifier_pairs: int,
+        batch_size: int,
+        num_negatives: int,
+        num_epochs: int,
+        learning_rate: float,
+        use_wandb: bool,
+        eval_batch_size: int,
+        label_smoothing: float,
+        transformer_num_heads: int,
+        transformer_num_layers: int,
+        training_approach: str,
+        affine_transformation: bool,
 ):
     """Run QBLP."""
     pipeline(
@@ -297,32 +297,32 @@ def run_qblp(
 @click.option("-nl", "--num-layers", type=int, default=2)
 @click.option("-ub", "--use-bias", type=bool, default=False)
 def run_stare(
-    inductive_setting: str,
-    dataset_name: str,
-    dataset_version: str,
-    embedding_dimension: int,
-    transformer_hidden_dimension: int,
-    attention_dropout: float,
-    attention_slope: float,
-    gcn_dropout: float,
-    hidden_dropout: float,
-    label_smoothing: float,
-    attention_num_heads: int,
-    transformer_num_heads: int,
-    transformer_num_layers: int,
-    num_layers: int,
-    qualifier_aggregation: str,
-    triple_qual_weight: float,
-    create_inverse_triples: bool,
-    max_num_qualifier_pairs: int,
-    batch_size: int,
-    num_epochs: int,
-    learning_rate: float,
-    use_wandb: bool,
-    eval_batch_size: int,
-    transformer_dropout: float,
-    training_approach: str,
-    use_bias: bool,
+        inductive_setting: str,
+        dataset_name: str,
+        dataset_version: str,
+        embedding_dimension: int,
+        transformer_hidden_dimension: int,
+        attention_dropout: float,
+        attention_slope: float,
+        gcn_dropout: float,
+        hidden_dropout: float,
+        label_smoothing: float,
+        attention_num_heads: int,
+        transformer_num_heads: int,
+        transformer_num_layers: int,
+        num_layers: int,
+        qualifier_aggregation: str,
+        triple_qual_weight: float,
+        create_inverse_triples: bool,
+        max_num_qualifier_pairs: int,
+        batch_size: int,
+        num_epochs: int,
+        learning_rate: float,
+        use_wandb: bool,
+        eval_batch_size: int,
+        transformer_dropout: float,
+        training_approach: str,
+        use_bias: bool,
 ):
     """Run StarE."""
     pipeline(
@@ -395,18 +395,18 @@ def run_stare(
     default="stare",
 )
 def tune(
-    inductive_setting: str,
-    dataset_name: str,
-    dataset_version: str,
-    max_num_qualifier_pairs: int,
-    create_inverse_triples: bool,
-    training_approach: str,
-    num_epochs: int,
-    num_hpo_iterations: int,
-    early_stopping_patience: int,
-    use_wandb: bool,
-    eval_batch_size: int,
-    model: str,
+        inductive_setting: str,
+        dataset_name: str,
+        dataset_version: str,
+        max_num_qualifier_pairs: int,
+        create_inverse_triples: bool,
+        training_approach: str,
+        num_epochs: int,
+        num_hpo_iterations: int,
+        early_stopping_patience: int,
+        use_wandb: bool,
+        eval_batch_size: int,
+        model: str,
 ):
     """Tune hyperparameters using nevergrad."""
     hpo_pipeline(
@@ -426,5 +426,89 @@ def tune(
     )
 
 
+"""
+Hyperparameter optimization pipeline for stare using smac.
+"""
+from ilp.hpo_smac import hpo_pipeline_smac
+
+
+@run.command(name='smac_stare')
+@option_inductive_setting
+@option_dataset
+@option_dataset_version
+@option_create_inverse_triples
+@option_max_pairs
+@option_create_inverse_triples
+@option_training_approach
+@click.option(
+    "-patience",
+    "--early-stopping-patience",
+    type=int,
+    default=200,
+)
+@option_epochs
+@click.option(
+    "-hi",
+    "--num-hpo-iterations",
+    type=int,
+    default=100,
+)
+@option_wandb
+@option_eval_batch_size
+@click.option(
+    "-m",
+    "--model",
+    type=click.Choice(["stare"], case_sensitive=False),
+    default="stare",
+)
+@click.option(
+    "-hp",
+    "--hpo",
+    type=str,
+    default='rs',  # FIXME: change this to
+)
+def tune_smac_stare(
+        inductive_setting: str,
+        dataset_name: str,
+        dataset_version: str,
+        max_num_qualifier_pairs: int,
+        create_inverse_triples: bool,
+        training_approach: str,
+        num_epochs: int,
+        num_hpo_iterations: int,
+        early_stopping_patience: int,
+        use_wandb: bool,
+        eval_batch_size: int,
+        model: str,
+        hpo
+):
+    hpo_pipeline_smac(
+        training_approach=training_approach,
+        num_epochs=num_epochs,
+        early_stopping_patience=early_stopping_patience,
+        num_hpo_iterations=num_hpo_iterations,
+        model_cls=model,
+        # forwarded to pipeline
+        dataset_name=dataset_name,
+        dataset_version=dataset_version,
+        inductive_setting=inductive_setting,
+        max_num_qualifier_pairs=max_num_qualifier_pairs,
+        create_inverse_triples=create_inverse_triples,
+        evaluation_batch_size=eval_batch_size,
+        use_wandb=use_wandb,
+        hpo=hpo
+    )
+
+
 if __name__ == '__main__':
+    tune_smac_stare(
+        # inductive_setting='full',
+        # dataset_name='wd50100',
+        # max_num_qualifier_pairs=6,
+        # eval_batch_size=10,
+        # model_name=StarE
+        # hpo='smac'
+    )
+
+    # tune()
     main()
